@@ -13,6 +13,7 @@ class GAGI:
         self.img_x = 16
         self.img_y = 16
         self.score_ciede2000 = np.array([])
+        self.score_number = np.array([])
         self.score_list = []
 
     def main(self):
@@ -35,6 +36,7 @@ class GAGI:
         self.compete_score()
         print(self.score_list)
 
+
     def rm_all(self):
         dir = './date/original'
         for f in os.listdir(dir):
@@ -44,25 +46,6 @@ class GAGI:
     def load_teach(self):
         teach_array = np.array(Image.open('source/mario.jpg'))
         return teach_array
-
-
-    '''
-    def load_random(self):
-        img_count = 0
-        for img_count in range(self.img_n):
-            if self.gen == 0:
-                file_name = 'date/original/' + str(self.gen) + '_' + str(img_count) + 'ori_img.jpg'
-                random_array = np.random.randint(0, 256, (self.img_x, self.img_y, 3)).astype(np.uint8)
-                random_img = Image.fromarray(random_array)
-                random_img.save(file_name)
-            else:
-                file_name = 'date/gen/' + str(self.gen) +'_' + str(self.img_count) + '_gen.jpg'
-                random_array = np.array(Image.open(file_name))
-            img_count += 1
-
-        return random_array
-
-    '''
 
 
     def load_random(self):
@@ -79,29 +62,38 @@ class GAGI:
         return random_array
 
 
-
-
     def compete_score(self):
-        while len(self.score_ciede2000) >= 4:
-            score_tmp = []
-            for _ in range(2):
-                score_1 = self.score_ciede2000[0]
-                score_2 = self.score_ciede2000[1]
-                self.score_ciede2000 = np.delete(self.score_ciede2000, [0, 1])
-                score_tmp.append(min(score_1, score_2))
+        def compete():
+            while len(self.score_ciede2000) >= 4:
+                score_tmp = []
+                for _ in range(2):
+                    score_1 = self.score_ciede2000[0]
+                    score_2 = self.score_ciede2000[1]
+                    self.score_ciede2000 = np.delete(self.score_ciede2000, [0, 1])
+                    score_tmp.append(min(score_1, score_2))
 
-            self.score_ciede2000 = np.append(self.score_ciede2000, score_tmp)
+                self.score_ciede2000 = np.append(self.score_ciede2000, score_tmp)
 
-        self.score_list = self.score_ciede2000[:4]
-        if len(self.score_list) < 4 and len(self.score_ciede2000) >= 2:
-            self.score_list = np.append(self.score_list, self.score_ciede2000[:2])
-            self.score_ciede2000 = self.score_ciede2000[2:]
+            self.score_list = self.score_ciede2000[:4]
+            if len(self.score_list) < 4 and len(self.score_ciede2000) >= 2:
+                self.score_list = np.append(self.score_list, self.score_ciede2000[:2])
+                self.score_ciede2000 = self.score_ciede2000[2:]
 
-        if len(self.score_list) < 4:
-            print("Not enough scores to compete.")
+            if len(self.score_list) < 4:
+                print("Not enough scores to compete.")
 
-        self.score_ciede2000 = np.array(self.score_ciede2000)
-        self.score_list = np.array(self.score_list)
+            self.score_ciede2000 = np.array(self.score_ciede2000)
+            self.score_list = np.array(self.score_list)
+
+        '''
+        def gen_next():
+            choce_num = random.randrange(0, 3)
+            load_array(self.score_list, )
+        '''
+
+
+        compete()
+
 
 
 GA = GAGI()
