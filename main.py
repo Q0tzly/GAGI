@@ -38,6 +38,9 @@ class GAGI:
 
         #compete_score() により、self.score_ciede2000 から２つずつとって、それを競争させて、self.gen_score_list に入れる
         self.compete()
+        print(self.score_ciede2000)
+        print(self.score_number_ciede2000)
+
 
     #original内の画像をrmする
     def rm_all(self):
@@ -69,15 +72,7 @@ class GAGI:
 
     #self.score_ciede2000 のリストより。２つずつ値を取得して、self.score_number_ciede2000に代入する
     def compete(self):
-        while len(self.score_ciede2000) >= 4:
-            print(len(self.score_ciede2000))
-            print(len(self.score_number_ciede2000))
-            print()
-            print(self.score_ciede2000)
-            print(self.score_number_ciede2000)
-            print()
-            print()
-
+        while len(self.score_ciede2000) > 4:
             score_tmp = []
             score_number_tmp = []
 
@@ -99,24 +94,11 @@ class GAGI:
 
             self.score_number_ciede2000.append(score_number_tmp)
 
-        self.score_list = self.score_ciede2000[:4]
-        self.score_number = self.score_number_ciede2000[:4]
 
-        if len(self.score_list) < 4 and len(self.score_ciede2000) >= 2:
-            self.score_list = np.append(self.score_list, self.score_ciede2000[:2])
-            self.score_ciede2000 = self.score_ciede2000[2:]
-
-        if len(self.score_list) < 4:
-            print("Not enough scores to compete.")
-
-        self.score_ciede2000 = np.array(self.score_ciede2000)
-        self.score_list = np.array(self.score_list)
-
-    '''
-    def gen_next():
+    def gen_next(self):
         choce_num = random.randrange(0, 3)
         load_array(self.score_list, )
-    '''
+
 
 
 GA = GAGI()
