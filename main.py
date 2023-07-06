@@ -70,34 +70,34 @@ class GAGI:
     #self.score_ciede2000 のリストより。２つずつ値を取得して、self.score_number_ciede2000に代入する
     def compete(self):
         while len(self.score_ciede2000) >= 4:
+            print(len(self.score_ciede2000))
+            print(len(self.score_number_ciede2000))
+            print()
+            print(self.score_ciede2000)
+            print(self.score_number_ciede2000)
+            print()
+            print()
+
             score_tmp = []
             score_number_tmp = []
-            for _ in range(2):
-                score_1 = self.score_ciede2000[0]
-                score_2 = self.score_ciede2000[1]
-                self.score_ciede2000 = np.delete(self.score_ciede2000, [0, 1])
-                result_min = min(score_1, score_2)
-                score_tmp.append(result_min)
 
-                print(score_1)
-                print()
-                print(score_2)
-                print()
-                print(result_min)
+            score_1 = self.score_ciede2000[0]
+            score_2 = self.score_ciede2000[1]
+            self.score_ciede2000 = np.delete(self.score_ciede2000, [0, 1])
+            result_min = min(score_1, score_2)
+            score_tmp.append(result_min)
 
-                if score_1 == result_min:
-                    score_number_tmp = self.score_number_ciede2000.pop(0)
-                    del self.score_number_ciede2000[1]
-                else:
-                    score_number_tmp = self.score_number_ciede2000.pop(1)
-                    del self.score_number_ciede2000[0]
+            if score_1 == result_min:
+                score_number_tmp = self.score_number_ciede2000.pop(0)
+                del self.score_number_ciede2000[1]
+            else:
+                score_number_tmp = self.score_number_ciede2000.pop(1)
+                del self.score_number_ciede2000[0]
+
 
             self.score_ciede2000 = np.append(self.score_ciede2000, score_tmp)
 
             self.score_number_ciede2000.append(score_number_tmp)
-
-            print(score_number_tmp)
-            print(self.score_number_ciede2000)
 
         self.score_list = self.score_ciede2000[:4]
         self.score_number = self.score_number_ciede2000[:4]
