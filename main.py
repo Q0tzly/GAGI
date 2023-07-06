@@ -1,4 +1,5 @@
 import random
+import shutil
 import os
 import numpy as np
 from PIL import Image
@@ -40,13 +41,25 @@ class GAGI:
         self.compete()
         print(self.score_ciede2000)
         print(self.score_number_ciede2000)
+        self.draw()
+
+    def draw(self):
+        for i in range(4):
+            num = self.score_number_ciede2000[i]
+            file_name = str(self.gen) + '_' + str(num) + 'ori_img.jpg'
+            shutil.copyfile("./date/original/" + file_name, "./date/draw/" + file_name)
 
 
     #original内の画像をrmする
     def rm_all(self):
-        dir = './date/original'
-        for f in os.listdir(dir):
-            os.remove(os.path.join(dir, f))
+        dir1 = './date/original'
+        for i in os.listdir(dir1):
+            os.remove(os.path.join(dir1, i))
+
+        dir2 = './date/draw'
+        for j in os.listdir(dir2):
+            os.remove(os.path.join(dir2, j))
+
 
 
     #教示画像を読み込む
