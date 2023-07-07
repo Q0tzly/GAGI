@@ -9,9 +9,9 @@ from src.ciede2000 import np_rgb_ciede2000, load_array
 class GAGI:
     def __init__(self):
         #設定可能なパラメータ
-        self.gen_num = 100      #世代の上限(2以上)
+        self.gen_num = 1000     #世代の上限(2以上)
         self.img_n = 2**8       #世代ごとのimgの数(4以上)
-        self.probability = 10    #変異確率(1 to 100)
+        self.probability = 1    #変異確率(1 to 100)
         self.img_x = 50         #imgの幅
         self.img_y = 50         #imgの高さ
         self.teach_img = 'img/kinopio.jpg' #教師画像のpath
