@@ -11,7 +11,7 @@ class GAGI:
         #設定可能なパラメータ
         self.gen_num = 100      #世代の上限(2以上)
         self.img_n = 2**8       #世代ごとのimgの数(4以上)
-        self.probability = 10    #変異確率
+        self.probability = 10    #変異確率(1 to 100)
         self.img_x = 16         #imgの幅
         self.img_y = 16         #imgの高さ
         self.teach_img = 'source/mario.jpg' #教師画像のpath
