@@ -7,6 +7,12 @@ This Project is Generate Image with GA
 proken-202307-open
 
 ***
+## Use
+
+Please make dir name date in ./
+and make dir name final, gen, original, tmp in ./date
+
+***
 ## License
 
 This Project's License is Apache License Version2.0 by 2023 Q0tzly
