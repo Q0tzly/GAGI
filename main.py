@@ -12,8 +12,8 @@ class GAGI:
         self.gen_num = 100      #世代の上限(2以上)
         self.img_n = 2**8       #世代ごとのimgの数(4以上)
         self.probability = 10    #変異確率(1 to 100)
-        self.img_x = 100         #imgの幅
-        self.img_y = 100         #imgの高さ
+        self.img_x = 50         #imgの幅
+        self.img_y = 50         #imgの高さ
         self.teach_img = 'img/kinopio.jpg' #教師画像のpath
 
         self.gen = 0
