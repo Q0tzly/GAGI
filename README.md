@@ -23,4 +23,12 @@ This Project's License is Apache License Version2.0 by 2023 Q0tzly
 ***
 ## Reference
 
+###Specification
+
 [Main](https://qiita.com/YottyPG/items/1c0cff4d37b8d7a8924e)
+
+###Images
+
+[slime](https://pixelarttown.net/2022/02/24/1839/)
+
+[kinopio](https://piq.codeus.net/picture/15617/tod-head-from-Super-Mario-Bros)
