@@ -8,49 +8,50 @@ from src.ciede2000 import np_rgb_ciede2000, load_array
 
 class GAGI:
     def __init__(self):
-        self.gen = 0        #画像の世代
-        self.gen_num = 2    #世代の上限(2以上)
-        self.img_n = 2**8   #8     世代ごとのimgの数
-        self.img_count = 0  #一時的にimgの数をカウントする
-        self.img_x = 16     #imgの幅
-        self.img_y = 16     #imgの高さ
-        self.score_ciede2000 = np.array([])     #ciede2000に通した後のimgのリスト
-        self.score_number_ciede2000 = []    #ciede2000に通した後のimgの番号のリスト
-        self.score_list = []    #fn competeに通した後のimgのリスト(4つ)
+        #設定可能なパラメータ
+        self.gen_num = 100      #世代の上限(2以上)
+        self.img_n = 2**8       #世代ごとのimgの数(4以上)
+        self.probability = 10    #変異確率
+        self.img_x = 16         #imgの幅
+        self.img_y = 16         #imgの高さ
+        self.teach_img = 'source/mario.jpg' #教師画像のpath
+
+        self.gen = 0
+        self.img_count = 0
+        self.score_ciede2000 = np.array([])
+        self.score_number_ciede2000 = []
+        self.score_list = []
         self.gen_score_list = np.array([])
 
 
     def main(self):
-        self.rm_all()   #まず、originalないにある画像を全て消す
+        self.rm_all()
         for self.gen in range(self.gen_num):
             print(str(self.gen) + 'gen')
             self.score_number_ciede2000.clear()
             self.score_ciede2000 = np.array([])
-            self.score_number_ciede2000 = list(range(0, self.img_n, 1))     #self.score_number_ciede2000のリストの中を 0 to self.img_n とする
+            self.score_number_ciede2000 = list(range(0, self.img_n, 1))
             self.img_count = 0
 
-            #load.teach(), random_array より取得したものを ciede2000 に通すのを、 img_n 回実行して、その全てを self.score_ciede2000 に代入する -> self.score_ciede2000
             for _ in range(self.img_n):
                 teach_array = self.load_teach()
                 random_array = self.load_random()
                 score_tmp = 0
                 score_tmp_add = 0
-                for i in range(16):
-                    for j in range(16):
+                for i in range(self.img_x):
+                    for j in range(self.img_y):
                         rgb1 = load_array(teach_array, i, j)
                         rgb2 = load_array(random_array, i, j)
                         score_tmp = np_rgb_ciede2000(rgb1, rgb2)
                         score_tmp_add += score_tmp
                 self.score_ciede2000 = np.append(self.score_ciede2000, [score_tmp_add])
 
-            #compete_score() により、self.score_ciede2000 から２つずつとって、それを競争させて、self.gen_score_list に入れる
             self.compete()
             self.gen_next()
 
         self.finish()
 
 
-    #original内の画像をrmする
     def rm_all(self):
         dir1 = './date/original'
         for i in os.listdir(dir1):
@@ -71,11 +72,10 @@ class GAGI:
 
     #教示画像を読み込む
     def load_teach(self):
-        teach_array = np.array(Image.open('source/mario.jpg'))
+        teach_array = np.array(Image.open(self.teach_img))
         return teach_array
 
 
-    #self.genによって、画像をランダム生成するか、画像を読み込むか決める　一回につき、一つの画像を読み込む -> return
     def load_random(self):
         if self.gen == 0:
             file_name = 'date/original/' + str(self.gen) + '_' + str(self.img_count) + '_ori.jpg'
@@ -90,7 +90,6 @@ class GAGI:
         return random_array
 
 
-    #self.score_ciede2000 のリストより。２つずつ値を取得して、self.score_number_ciede2000に代入する
     def compete(self):
         while len(self.score_ciede2000) > 4:
             score_tmp = []
@@ -131,10 +130,10 @@ class GAGI:
     def gen_next(self):
         if self.gen == 0:
             for n in range(self.img_n):
-                image_array = np.zeros((16, 16, 3), dtype=np.uint8)
+                image_array = np.zeros((self.img_x, self.img_y, 3), dtype=np.uint8)
                 file_name = 'date/tmp/' + str(self.gen + 1) +'_' + str(n) + '_gen.jpg'
-                for i in range(16):
-                    for j in range(16):
+                for i in range(self.img_x):
+                    for j in range(self.img_y):
                         m_probability = random.randint(0, 100)
 
                         if m_probability == 0:
@@ -153,10 +152,10 @@ class GAGI:
 
         else:
             for n in range(self.img_n):
-                image_array = np.zeros((16, 16, 3), dtype=np.uint8)
+                image_array = np.zeros((self.img_x, self.img_y, 3), dtype=np.uint8)
                 file_name = 'date/tmp/' + str(self.gen + 1) +'_' + str(n) + '_gen.jpg'
-                for i in range(16):
-                    for j in range(16):
+                for i in range(self.img_x):
+                    for j in range(self.img_y):
                         m_probability = random.randint(0, 100)
                         if m_probability == 0:
                             choce_rgb = [random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256)]
