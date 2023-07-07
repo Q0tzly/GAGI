@@ -14,7 +14,7 @@ class GAGI:
         self.probability = 10    #変異確率(1 to 100)
         self.img_x = 16         #imgの幅
         self.img_y = 16         #imgの高さ
-        self.teach_img = 'source/mario.jpg' #教師画像のpath
+        self.teach_img = 'img/mario.jpg' #教師画像のpath
 
         self.gen = 0
         self.img_count = 0
