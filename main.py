@@ -3,7 +3,7 @@ import shutil
 import os
 import numpy as np
 from PIL import Image
-from src.ciede2000 import np_rgb_ciede2000, load_array, get_bd
+from src.ciede2000 import np_rgb_ciede2000, load_array, get_bd, get_sd
 
 
 class GAGI:
@@ -22,6 +22,7 @@ class GAGI:
         self.teach_score = 0
         self.score_ciede2000 = np.array([])
         self.score_b = np.array([])
+        self.score_s = np.array([])
         self.score_number_ciede2000 = []
         self.score_list = []
         self.gen_score_list = np.array([])
@@ -35,6 +36,7 @@ class GAGI:
             self.score_number_ciede2000.clear()
             self.score_ciede2000 = np.array([])
             self.score_b = np.array([])
+            self.score_s = np.array([])
             self.score_number_ciede2000 = list(range(0, self.img_n, 1))
             self.img_count = 0
 
@@ -44,20 +46,26 @@ class GAGI:
                 score_ciede2000_tmp_add = 0
                 score_b_tmp = 0
                 score_b_tmp_add = 0
+                score_s_tmp = 0
+                score_s_tmp_add = 0
                 for i in range(self.img_x):
                     for j in range(self.img_y):
                         rgb1 = load_array(self.teach_score, i, j)
                         rgb2 = load_array(random_array, i, j)
                         score_ciede2000_tmp = np_rgb_ciede2000(rgb1, rgb2)
                         score_b_tmp = get_bd(rgb1, rgb2)
+                        score_s_tmp = get_sd(rgb1, rgb2)
                         score_ciede2000_tmp_add += score_ciede2000_tmp
                         score_b_tmp_add += score_b_tmp
+                        score_s_tmp_add += score_s_tmp
 
                 self.score_ciede2000 = np.append(self.score_ciede2000, [score_ciede2000_tmp_add])
                 self.score_b = np.append(self.score_b, score_b_tmp_add)
+                self.score_s = np.append(self.score_s, score_b_tmp_add)
 
             self.score_ciede2000 = self.score_ciede2000[:self.img_n]
             self.score_b = self.score_b[:self.img_n]
+            self.score_s = self.score_s[:self.img_n]
 
             self.compete()
             self.delete_files('./date/tmp/', str(self.gen - 1))
@@ -116,9 +124,12 @@ class GAGI:
         score = []
         score_tmp = []
         score_i = []
+
         score_ciede2000 = self.score_ciede2000
         score_b = self.score_b / 2
-        score_tmp = score_ciede2000 + score_b
+        score_s = self.score_s / 2
+
+        score_tmp = (score_ciede2000 + score_b + score_s)/2
         score_sorted_indices = np.argsort(score_tmp)  # score_tmp の要素を小さい順にソートし、インデックスを取得する
         score_sorted = score_tmp[score_sorted_indices]  # ソートされた score_tmp の要素を取得する
         score = score_sorted[:self.e_img]  # 上位4つの要素を取得する
