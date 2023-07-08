@@ -127,3 +127,35 @@ def get_bd(rgb1, rgb2):
     brightness2 = (rgb2[0] * 299 + rgb2[1] * 587 + rgb2[2] * 114) / 1000
     difference = abs(brightness1 - brightness2)
     return difference
+
+def get_sd(rgb1, rgb2):
+    def _rgb_to_hsv(rgb):
+        r, g, b = rgb
+        r, g, b = r / 255.0, g / 255.0, b / 255.0
+        max_val = max(r, g, b)
+        min_val = min(r, g, b)
+
+        if max_val == min_val:
+            hue = 0
+        elif max_val == r:
+            hue = (60 * ((g - b) / (max_val - min_val)) + 360) % 360
+        elif max_val == g:
+            hue = (60 * ((b - r) / (max_val - min_val)) + 120) % 360
+        else:
+            hue = (60 * ((r - g) / (max_val - min_val)) + 240) % 360
+
+        if max_val == 0:
+            saturation = 0
+        else:
+            saturation = (max_val - min_val) / max_val
+
+        value = max_val
+        return hue, saturation, value
+
+    hsv1 = _rgb_to_hsv(rgb1)
+    hsv2 = _rgb_to_hsv(rgb2)
+
+    # 彩度の差を計算
+    saturation_diff = abs(hsv1[1] - hsv2[1])
+
+    return saturation_diff
