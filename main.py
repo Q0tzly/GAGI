@@ -15,7 +15,7 @@ class GAGI:
         self.probability = 5    #変異確率(1 to 100)
         self.cw = 1             #ciede2000の重み(0以上)
         self.bw = 1             #明度の重み(0以上)
-        self.sw = 2             #彩度の重み(0以上)
+        self.sw = 1             #彩度の重み(0以上)
         self.img_x = 16         #imgの幅
         self.img_y = 16         #imgの高さ
         self.teach_img = 'img/mario.jpg' #教師画像のpath
@@ -130,7 +130,7 @@ class GAGI:
 
         score_ciede2000 = self.score_ciede2000
         score_b = self.score_b / 2
-        score_s = self.score_s / 2
+        score_s = self.score_s
 
         score_tmp = (score_ciede2000 * self.cw + score_b * self.bw + score_s * self.sw)/2
         score_sorted_indices = np.argsort(score_tmp)  # score_tmp の要素を小さい順にソートし、インデックスを取得する
