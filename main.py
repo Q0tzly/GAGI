@@ -3,7 +3,7 @@ import shutil
 import os
 import numpy as np
 from PIL import Image
-from src.ciede2000 import np_rgb_ciede2000, load_array
+from src.ciede2000 import np_rgb_ciede2000, load_array, get_bd
 
 
 class GAGI:
@@ -11,6 +11,7 @@ class GAGI:
         #設定可能なパラメータ
         self.gen_num = 1000     #世代の上限(2以上)
         self.img_n = 2**8       #世代ごとのimgの数(4以上)
+        self.e_img = 4          #世代ごとの選ばれるimgの数
         self.probability = 5    #変異確率(1 to 100)
         self.img_x = 16         #imgの幅
         self.img_y = 16         #imgの高さ
@@ -20,6 +21,7 @@ class GAGI:
         self.img_count = 0
         self.teach_score = 0
         self.score_ciede2000 = np.array([])
+        self.score_b = np.array([])
         self.score_number_ciede2000 = []
         self.score_list = []
         self.gen_score_list = np.array([])
@@ -32,25 +34,44 @@ class GAGI:
             print(str(self.gen) + 'gen')
             self.score_number_ciede2000.clear()
             self.score_ciede2000 = np.array([])
+            self.score_b = np.array([])
             self.score_number_ciede2000 = list(range(0, self.img_n, 1))
             self.img_count = 0
 
             for _ in range(self.img_n):
                 random_array = self.load_random()
-                score_tmp = 0
-                score_tmp_add = 0
+                score_ciede2000_tmp = 0
+                score_ciede2000_tmp_add = 0
+                score_b_tmp = 0
+                score_b_tmp_add = 0
                 for i in range(self.img_x):
                     for j in range(self.img_y):
                         rgb1 = load_array(self.teach_score, i, j)
                         rgb2 = load_array(random_array, i, j)
-                        score_tmp = np_rgb_ciede2000(rgb1, rgb2)
-                        score_tmp_add += score_tmp
-                self.score_ciede2000 = np.append(self.score_ciede2000, [score_tmp_add])
+                        score_ciede2000_tmp = np_rgb_ciede2000(rgb1, rgb2)
+                        score_b_tmp = get_bd(rgb1, rgb2)
+                        score_ciede2000_tmp_add += score_ciede2000_tmp
+                        score_b_tmp_add += score_b_tmp
+
+                self.score_ciede2000 = np.append(self.score_ciede2000, [score_ciede2000_tmp_add])
+                self.score_b = np.append(self.score_b, score_b_tmp_add)
+
+            self.score_ciede2000 = self.score_ciede2000[:self.img_n]
+            self.score_b = self.score_b[:self.img_n]
 
             self.compete()
+            self.delete_files('./date/tmp/', str(self.gen - 1))
             self.gen_next()
 
         self.finish()
+
+
+    def delete_files(self, directory, keyword):
+    # ディレクトリ内のファイルを走査します
+        for filename in os.listdir(directory):
+            if keyword in filename:
+                file_path = os.path.join(directory, filename)
+                os.remove(file_path)
 
 
     def rm_all(self):
@@ -92,28 +113,24 @@ class GAGI:
 
 
     def compete(self):
-        while len(self.score_ciede2000) > 1:  # 要素数が1以下になるまでループ
-            score_tmp = []
-            score_number_tmp = []
+        score = []
+        score_tmp = []
+        score_i = []
+        score_ciede2000 = self.score_ciede2000
+        score_b = self.score_b / 2
+        score_tmp = score_ciede2000 + score_b
+        score_sorted_indices = np.argsort(score_tmp)  # score_tmp の要素を小さい順にソートし、インデックスを取得する
+        score_sorted = score_tmp[score_sorted_indices]  # ソートされた score_tmp の要素を取得する
+        score = score_sorted[:self.e_img]  # 上位4つの要素を取得する
 
-            for i in range(0, len(self.score_ciede2000) - 1, 2):  # 2つずつ要素を処理
-                score_1 = self.score_ciede2000[i]
-                score_2 = self.score_ciede2000[i + 1]
-                result_min = min(score_1, score_2)
-                score_tmp.append(result_min)
+        for s in score:
+            index = np.where(score_tmp == s)[0][0]  # score_tmp における要素 s のインデックスを取得する
+            score_i.append(index)
 
-                if score_1 == result_min:
-                    score_number_tmp.append(self.score_number_ciede2000[i])
-                else:
-                    score_number_tmp.append(self.score_number_ciede2000[i + 1])
+        self.score_ciede2000 = score
+        self.score_number_ciede2000 = score_i
 
-            if len(self.score_ciede2000) % 2 != 0:  # 要素数が奇数の場合、最後の要素を残す
-                score_tmp.append(self.score_ciede2000[-1])
-                score_number_tmp.append(self.score_number_ciede2000[-1])
-
-            self.score_ciede2000 = np.array(score_tmp)
-            self.score_number_ciede2000 = score_number_tmp
-
+        for _ in range(len(self.score_ciede2000)):
             if self.gen == 0:
                 for i in range(len(self.score_number_ciede2000)):
                     num = self.score_number_ciede2000[i]
@@ -125,6 +142,7 @@ class GAGI:
                     num = self.score_number_ciede2000[i]
                     file_name = str(self.gen) + '_' + str(num) + '_gen.jpg'
                     shutil.copyfile("./date/tmp/" + file_name, "./date/gen/" + file_name)
+
         print(self.score_ciede2000)
         print(self.score_number_ciede2000)
         print()

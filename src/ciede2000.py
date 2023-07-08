@@ -120,3 +120,10 @@ def np_rgb_ciede2000(rgb1, rgb2):
 def load_array(array, i, j):
     return_array = array[i, j, :]
     return return_array
+
+
+def get_bd(rgb1, rgb2):
+    brightness1 = (rgb1[0] * 299 + rgb1[1] * 587 + rgb1[2] * 114) / 1000
+    brightness2 = (rgb2[0] * 299 + rgb2[1] * 587 + rgb2[2] * 114) / 1000
+    difference = abs(brightness1 - brightness2)
+    return difference
