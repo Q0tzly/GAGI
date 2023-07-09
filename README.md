@@ -9,9 +9,9 @@ proken-202307-open
 ***
 ## Use
 
-Please make dir name data in ./
+Please run init.py
+After you can enjoy Generate Image with GA!
 
-and make dir name final, gen, original, tmp in ./data
 
 ***
 ## License
