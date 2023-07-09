@@ -10,6 +10,7 @@ proken-202307-open
 ## Use
 
 Please run init.py
+
 After you can enjoy Generate Image with GA!
 
 
@@ -23,11 +24,12 @@ This Project's License is Apache License Version2.0 by 2023 Q0tzly
 ***
 ## Reference
 
-###Specification
+<h3>Specification</h3>
 
 [Main](https://qiita.com/YottyPG/items/1c0cff4d37b8d7a8924e)
 
-###Images
+###
+<h3>Images</h3>
 
 [slime](https://pixelarttown.net/2022/02/24/1839/)
 
