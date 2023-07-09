@@ -36,6 +36,10 @@ class GAGI:
 
     def main(self):
         print("こんにちは")
+        print(" ")
+        print("Apache License ver2.0")
+        print("Copyright 2023 Q0tzly")
+        print(" ")
         self.put_text()
         self.rm_all()
         self.teach_score = self.load_teach()
