@@ -1,5 +1,5 @@
-/date/final/*
-/date/gen/*
-/date/original/*
-/date/tmp/*
+/data/final/*
+/data/gen/*
+/data/original/*
+/data/tmp/*
 /test.py

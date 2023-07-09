@@ -9,9 +9,9 @@ proken-202307-open
 ***
 ## Use
 
-Please make dir name date in ./
+Please make dir name data in ./
 
-and make dir name final, gen, original, tmp in ./date
+and make dir name final, gen, original, tmp in ./data
 
 ***
 ## License

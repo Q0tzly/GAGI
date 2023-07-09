@@ -71,7 +71,7 @@ class GAGI:
             self.score_s = self.score_s[:self.img_n]
 
             self.compete()
-            self.delete_files('./date/tmp/', str(self.gen - 1))
+            self.delete_files('./data/tmp/', str(self.gen - 1))
             self.gen_next()
 
         self.finish()
@@ -86,19 +86,19 @@ class GAGI:
 
 
     def rm_all(self):
-        dir1 = './date/original'
+        dir1 = './data/original'
         for i in os.listdir(dir1):
             os.remove(os.path.join(dir1, i))
 
-        dir2 = './date/gen'
+        dir2 = './data/gen'
         for j in os.listdir(dir2):
             os.remove(os.path.join(dir2, j))
 
-        dir3 = './date/tmp/'
+        dir3 = './data/tmp/'
         for k in os.listdir(dir3):
             os.remove(os.path.join(dir3, k))
 
-        dir3 = './date/final/'
+        dir3 = './data/final/'
         for l in os.listdir(dir3):
             os.remove(os.path.join(dir3, l))
 
@@ -111,12 +111,12 @@ class GAGI:
 
     def load_random(self):
         if self.gen == 0:
-            file_name = 'date/original/' + str(self.gen) + '_' + str(self.img_count) + '_ori.jpg'
+            file_name = 'data/original/' + str(self.gen) + '_' + str(self.img_count) + '_ori.jpg'
             random_array = np.random.randint(0, 256, (self.img_x, self.img_y, 3)).astype(np.uint8)
             random_img = Image.fromarray(random_array)
             random_img.save(file_name)
         else:
-            file_name = 'date/tmp/' + str(self.gen) +'_' + str(self.img_count) + '_gen.jpg'
+            file_name = 'data/tmp/' + str(self.gen) +'_' + str(self.img_count) + '_gen.jpg'
             random_array = np.array(Image.open(file_name))
 
         self.img_count += 1
@@ -149,13 +149,13 @@ class GAGI:
                 for i in range(len(self.score_number_ciede2000)):
                     num = self.score_number_ciede2000[i]
                     file_name = str(self.gen) + '_' + str(num) + '_ori.jpg'
-                    shutil.copyfile("./date/original/" + file_name, "./date/gen/" + file_name)
+                    shutil.copyfile("./data/original/" + file_name, "./data/gen/" + file_name)
 
             else:
                 for i in range(len(self.score_number_ciede2000)):
                     num = self.score_number_ciede2000[i]
                     file_name = str(self.gen) + '_' + str(num) + '_gen.jpg'
-                    shutil.copyfile("./date/tmp/" + file_name, "./date/gen/" + file_name)
+                    shutil.copyfile("./data/tmp/" + file_name, "./data/gen/" + file_name)
 
         print(self.score_ciede2000)
         print(self.score_number_ciede2000)
@@ -166,7 +166,7 @@ class GAGI:
         if self.gen == 0:
             for n in range(self.img_n):
                 image_array = np.zeros((self.img_x, self.img_y, 3), dtype=np.uint8)
-                file_name = 'date/tmp/' + str(self.gen + 1) +'_' + str(n) + '_gen.jpg'
+                file_name = 'data/tmp/' + str(self.gen + 1) +'_' + str(n) + '_gen.jpg'
                 for i in range(self.img_x):
                     for j in range(self.img_y):
                         m_probability = random.randint(0, 100)
@@ -177,7 +177,7 @@ class GAGI:
 
                         else:
                             load_img_n = random.randint(0, len(self.score_number_ciede2000) - 1)
-                            load_file_name = 'date/gen/' + str(self.gen) +'_' + str(self.score_number_ciede2000[load_img_n]) + '_ori.jpg'
+                            load_file_name = 'data/gen/' + str(self.gen) +'_' + str(self.score_number_ciede2000[load_img_n]) + '_ori.jpg'
                             random_array = np.array(Image.open(load_file_name))
                             rgb = load_array(random_array, i, j)
                             image_array[i, j] = rgb
@@ -188,7 +188,7 @@ class GAGI:
         else:
             for n in range(self.img_n):
                 image_array = np.zeros((self.img_x, self.img_y, 3), dtype=np.uint8)
-                file_name = 'date/tmp/' + str(self.gen + 1) +'_' + str(n) + '_gen.jpg'
+                file_name = 'data/tmp/' + str(self.gen + 1) +'_' + str(n) + '_gen.jpg'
                 for i in range(self.img_x):
                     for j in range(self.img_y):
                         m_probability = random.randint(0, 100)
@@ -197,7 +197,7 @@ class GAGI:
                             image_array[i, j] = choce_rgb
                         else:
                             load_img_n = random.randint(0, len(self.score_number_ciede2000) - 1)
-                            load_file_name = 'date/gen/' + str(self.gen) +'_' + str(self.score_number_ciede2000[load_img_n]) + '_gen.jpg'
+                            load_file_name = 'data/gen/' + str(self.gen) +'_' + str(self.score_number_ciede2000[load_img_n]) + '_gen.jpg'
                             random_array = np.array(Image.open(load_file_name))
                             rgb = load_array(random_array, i, j)
                             image_array[i, j] = rgb
@@ -208,8 +208,8 @@ class GAGI:
     def finish(self):
         for i in range(len(self.score_number_ciede2000)):
             num = self.score_number_ciede2000[i]
-            file_name = str(self.gen) + '_' + str(num) + '_gen.jpg'
-            shutil.copyfile("./date/tmp/" + file_name, "./date/final/" + file_name)
+            file_name = str(self.gen + 1) + '_' + str(num) + '_gen.jpg'
+            shutil.copyfile("./data/tmp/" + file_name, "./data/final/" + file_name)
         print('finish')
         print(self.score_ciede2000)
         print(self.score_number_ciede2000)
