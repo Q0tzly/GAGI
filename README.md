@@ -8,6 +8,21 @@ proken-202307-open
 
 ***
 ## Use
+Before use it, install python library
+
+random, shutil, numpy, matplotlib, Pillow
+
+```zsh
+pip install random
+
+pip install pytest-shutil
+
+pip install numpy
+
+pip install matplotlib
+
+pip install Pillow
+```
 
 Please run init.py
 
