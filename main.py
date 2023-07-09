@@ -9,17 +9,18 @@ from src.ciede2000 import np_rgb_ciede2000, load_array, get_bd, get_sd
 class GAGI:
     def __init__(self):
         #設定可能なパラメータ
-        self.gen_num = 1000     #世代の上限(2以上)
-        self.img_n = 2**8       #世代ごとのimgの数(4以上)
-        self.e_img = 4          #世代ごとの選ばれるimgの数
-        self.probability = 5    #変異確率(1 to 100)
-        self.cw = 1             #ciede2000の重み(0以上)
-        self.bw = 1             #明度の重み(0以上)
-        self.sw = 1             #彩度の重み(0以上)
-        self.img_x = 16         #imgの幅
-        self.img_y = 16         #imgの高さ
-        self.teach_img = 'img/mario.jpg' #教師画像のpath
+        self.gen_num = 600      #世代の上限(2以上) (1000)
+        self.img_n = 2**4       #世代ごとのimgの数(4以上) (2**8)
+        self.e_img = 4          #世代ごとの選ばれるimgの数 (4)
+        self.probability = 20   #変異確率(1 to 100) (5)
+        self.cw = 1             #ciede2000の重み(0以上) (1)
+        self.bw = 1             #明度の重み(0以上) (1)
+        self.sw = 1             #彩度の重み(0以上) (1)
+        self.img_x = 16         #imgの幅 (16)
+        self.img_y = 16         #imgの高さ (16)
+        self.teach_img = 'img/mario.jpg' #教師画像のpath ('img/mario.jpg)
 
+        self.parameta_set = "d"
         self.gen = 0
         self.img_count = 0
         self.teach_score = 0
@@ -32,6 +33,10 @@ class GAGI:
 
 
     def main(self):
+        print("こんにちは")
+        self.put_text()
+
+
         self.rm_all()
         self.teach_score = self.load_teach()
         for self.gen in range(self.gen_num):
@@ -75,6 +80,69 @@ class GAGI:
             self.gen_next()
 
         self.finish()
+
+
+    def put_text(self):
+            print("あなたはパラメータのセットをすることができます")
+            print("細部までパラメータをセットする場合は y")
+            print("簡単にセットする場合は e")
+            print("デフォルト設定を使いたい場合は d を打ってください")
+            print("終了する場合は exit か C-c で終了できます")
+            self.parameta_set = input(": ")
+            print(" ")
+            if self.parameta_set == "y":
+                print("パラメータのセットアップを行います")
+                print("画像のパス以外は半角数字で入力してください")
+                print(" ")
+                print("世代の上限(2以上)")
+                self.gen_num = int(input(": "))
+                print("世代ごとの画像の数(2以上)")
+                self.img_n = int(input(": "))
+                print("世代ごとに生き残る画像の数(1以上)")
+                self.e_img = int(input(": "))
+                print("変異確率(0 から 100) ")
+                self.probability = int(input(": "))
+                print("ciede2000の評価関数の重み(0以上)")
+                self.cw = int(input(": "))
+                print("明度の評価関数の重み(0以上)")
+                self.bw = int(input(": "))
+                print("彩度の評価関数の重み(0以上)")
+                self.sw = int(input(": "))
+                print(" ")
+                print("画像の高さと幅は教師データと同じにすることを推奨します")
+                print("画像の横の長さ")
+                self.img_x = int(input(": "))
+                print("画像の縦の長さ")
+                self.img_y = int(input(": "))
+                print("教師画像のパス")
+                self.teach_img = str(input(": "))
+                print("パラメータのセットを終了したので画像を生成します")
+                print(" ")
+
+            elif self.parameta_set == "e":
+                print("簡単なパラメータのセットアップを行います")
+                print("画像のパス以外は半角数字で入力してください")
+                print(" ")
+                print("世代の上限(2以上)")
+                self.gen_num = int(input(": "))
+                print("世代ごとの画像の数(2以上)")
+                self.img_n = int(input(": "))
+                print("世代ごとに生き残る画像の数(1以上)")
+                self.e_img = int(input(": "))
+                print("変異確率(0 から 100) ")
+                self.probability = int(input(": "))
+                print("パラメータのセットを終了したので画像を生成します")
+                print(" ")
+
+            elif self.parameta_set == "d":
+                print("デフォルト設定で画像の生成を開始します")
+
+            elif self.parameta_set == "exit":
+                print("終了します")
+                exit()
+
+            else:
+                self.put_text()
 
 
     def delete_files(self, directory, keyword):
@@ -169,7 +237,7 @@ class GAGI:
                 file_name = 'data/tmp/' + str(self.gen + 1) +'_' + str(n) + '_gen.jpg'
                 for i in range(self.img_x):
                     for j in range(self.img_y):
-                        m_probability = random.randint(0, 100)
+                        m_probability = self.probability
 
                         if m_probability == 0:
                             choce_rgb = [random.randrange(0, 256), random.randrange(0, 256), random.randrange(0, 256)]
