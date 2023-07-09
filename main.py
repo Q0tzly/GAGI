@@ -2,6 +2,7 @@ import random
 import shutil
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 from PIL import Image
 from src.ciede2000 import np_rgb_ciede2000, load_array, get_bd, get_sd
 
@@ -30,13 +31,12 @@ class GAGI:
         self.score_number_ciede2000 = []
         self.score_list = []
         self.gen_score_list = np.array([])
+        self.fig, self.ax = None, None
 
 
     def main(self):
         print("こんにちは")
         self.put_text()
-
-
         self.rm_all()
         self.teach_score = self.load_teach()
         for self.gen in range(self.gen_num):
@@ -76,73 +76,14 @@ class GAGI:
             self.score_s = self.score_s[:self.img_n]
 
             self.compete()
+            self.draw()
             self.delete_files('./data/tmp/', str(self.gen - 1))
             self.gen_next()
 
         self.finish()
 
 
-    def put_text(self):
-            print("あなたはパラメータのセットをすることができます")
-            print("細部までパラメータをセットする場合は y")
-            print("簡単にセットする場合は e")
-            print("デフォルト設定を使いたい場合は d を打ってください")
-            print("終了する場合は exit か C-c で終了できます")
-            self.parameta_set = input(": ")
-            print(" ")
-            if self.parameta_set == "y":
-                print("パラメータのセットアップを行います")
-                print("画像のパス以外は半角数字で入力してください")
-                print(" ")
-                print("世代の上限(2以上)")
-                self.gen_num = int(input(": "))
-                print("世代ごとの画像の数(2以上)")
-                self.img_n = int(input(": "))
-                print("世代ごとに生き残る画像の数(1以上)")
-                self.e_img = int(input(": "))
-                print("変異確率(0 から 100) ")
-                self.probability = int(input(": "))
-                print("ciede2000の評価関数の重み(0以上)")
-                self.cw = int(input(": "))
-                print("明度の評価関数の重み(0以上)")
-                self.bw = int(input(": "))
-                print("彩度の評価関数の重み(0以上)")
-                self.sw = int(input(": "))
-                print(" ")
-                print("画像の高さと幅は教師データと同じにすることを推奨します")
-                print("画像の横の長さ")
-                self.img_x = int(input(": "))
-                print("画像の縦の長さ")
-                self.img_y = int(input(": "))
-                print("教師画像のパス")
-                self.teach_img = str(input(": "))
-                print("パラメータのセットを終了したので画像を生成します")
-                print(" ")
 
-            elif self.parameta_set == "e":
-                print("簡単なパラメータのセットアップを行います")
-                print("画像のパス以外は半角数字で入力してください")
-                print(" ")
-                print("世代の上限(2以上)")
-                self.gen_num = int(input(": "))
-                print("世代ごとの画像の数(2以上)")
-                self.img_n = int(input(": "))
-                print("世代ごとに生き残る画像の数(1以上)")
-                self.e_img = int(input(": "))
-                print("変異確率(0 から 100) ")
-                self.probability = int(input(": "))
-                print("パラメータのセットを終了したので画像を生成します")
-                print(" ")
-
-            elif self.parameta_set == "d":
-                print("デフォルト設定で画像の生成を開始します")
-
-            elif self.parameta_set == "exit":
-                print("終了します")
-                exit()
-
-            else:
-                self.put_text()
 
 
     def delete_files(self, directory, keyword):
@@ -281,6 +222,100 @@ class GAGI:
         print('finish')
         print(self.score_ciede2000)
         print(self.score_number_ciede2000)
+
+
+    def draw(self):
+        if self.gen == 0:
+            if self.fig is None or self.ax is None:
+                self.fig, self.ax = plt.subplots()  # FigureとAxesを作成
+
+            file_name = 'data/original/' + str(self.gen) + '_0_ori.jpg'  # 表示する画像のファイル名
+            image = Image.open(file_name)
+
+            if not hasattr(self, 'img_plot'):
+                self.img_plot = self.ax.imshow(image)
+                plt.show(block=False)  # ブロックしないで表示
+            else:
+                self.img_plot.set_data(image)  # 画像データを更新
+                self.fig.canvas.draw()  # キャンバスを再描画
+                plt.pause(0.1)  # 更新を反映するために一時停止
+        else:
+            if self.fig is None or self.ax is None:
+                self.fig, self.ax = plt.subplots()  # FigureとAxesを作成
+
+            file_name = 'data/tmp/' + str(self.gen) + '_0_gen.jpg'  # 表示する画像のファイル名
+            image = Image.open(file_name)
+
+            if not hasattr(self, 'img_plot'):
+                self.img_plot = self.ax.imshow(image)
+                plt.show(block=False)  # ブロックしないで表示
+            else:
+                self.img_plot.set_data(image)  # 画像データを更新
+                self.fig.canvas.draw()  # キャンバスを再描画
+                plt.pause(0.1)  # 更新を反映するために一時停止
+
+
+    def put_text(self):
+            print("あなたはパラメータのセットをすることができます")
+            print("細部までパラメータをセットする場合は y")
+            print("簡単にセットする場合は e")
+            print("デフォルト設定を使いたい場合は d を打ってください")
+            print("終了する場合は exit か C-c で終了できます")
+            self.parameta_set = input(": ")
+            print(" ")
+            if self.parameta_set == "y":
+                print("パラメータのセットアップを行います")
+                print("画像のパス以外は半角数字で入力してください")
+                print(" ")
+                print("世代の上限(2以上)")
+                self.gen_num = int(input(": "))
+                print("世代ごとの画像の数(2以上)")
+                self.img_n = int(input(": "))
+                print("世代ごとに生き残る画像の数(1以上)")
+                self.e_img = int(input(": "))
+                print("変異確率(0 から 100) ")
+                self.probability = int(input(": "))
+                print("ciede2000の評価関数の重み(0以上)")
+                self.cw = int(input(": "))
+                print("明度の評価関数の重み(0以上)")
+                self.bw = int(input(": "))
+                print("彩度の評価関数の重み(0以上)")
+                self.sw = int(input(": "))
+                print(" ")
+                print("画像の高さと幅は教師データと同じにすることを推奨します")
+                print("画像の横の長さ")
+                self.img_x = int(input(": "))
+                print("画像の縦の長さ")
+                self.img_y = int(input(": "))
+                print("教師画像のパス")
+                self.teach_img = str(input(": "))
+                print("パラメータのセットを終了したので画像を生成します")
+                print(" ")
+
+            elif self.parameta_set == "e":
+                print("簡単なパラメータのセットアップを行います")
+                print("画像のパス以外は半角数字で入力してください")
+                print(" ")
+                print("世代の上限(2以上)")
+                self.gen_num = int(input(": "))
+                print("世代ごとの画像の数(2以上)")
+                self.img_n = int(input(": "))
+                print("世代ごとに生き残る画像の数(1以上)")
+                self.e_img = int(input(": "))
+                print("変異確率(0 から 100) ")
+                self.probability = int(input(": "))
+                print("パラメータのセットを終了したので画像を生成します")
+                print(" ")
+
+            elif self.parameta_set == "d":
+                print("デフォルト設定で画像の生成を開始します")
+
+            elif self.parameta_set == "exit":
+                print("終了します")
+                exit()
+
+            else:
+                self.put_text()
 
 
 
